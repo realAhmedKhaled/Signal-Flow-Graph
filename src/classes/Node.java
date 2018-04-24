@@ -13,7 +13,8 @@ public class Node implements INode {
 	public Node(int numberOfnodes) {
 		n = numberOfnodes;
 		childIterator = 0;
-		// TODO set the size of connectedNodes and gait to n;
+		gains=new int[n];
+		childNodes= new boolean[n];
 	}
 
 	@Override
@@ -53,9 +54,14 @@ public class Node implements INode {
 	@Override
 	public int getNextunvisitedChild() {
 		// TODO Auto-generated method stub
-		for (int i = childIterator + 1; i < n; i++) {
-			if (childNodes[i])
-				return i;
+		while (childIterator< n) {
+			if (childNodes[childIterator])
+			{
+				int temp=childIterator;
+				childIterator++;
+				return temp;
+			}
+			childIterator++;
 		}
 
 		return -1;

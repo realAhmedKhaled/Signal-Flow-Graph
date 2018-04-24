@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.ArrayList;
+
 public interface IGraph {
 
 	/**
@@ -8,7 +10,7 @@ public interface IGraph {
 	 * @return 2D array. each raw represents a sequence of indexes that form a
 	 *         loop.
 	 */
-	int[][] getLoops();
+	ArrayList<Integer[]> getLoops();
 
 	/**
 	 * get all the forward passes between two points in the graph
