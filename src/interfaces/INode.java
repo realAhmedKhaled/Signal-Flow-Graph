@@ -52,6 +52,13 @@ public interface INode {
 	 */
 
 	int getNextunvisitedChild();
+	/**
+	 * get the gain of between this node and the nodex node
+	 * @param nextNode
+	 * @return the gain of the path between them
+	 */
+	
+	int getGain(int nextNode);
 		
 
 }

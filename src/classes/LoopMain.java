@@ -1,6 +1,6 @@
 package classes;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import interfaces.IGraph;
 
@@ -9,21 +9,32 @@ public class LoopMain {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println();
-		IGraph x=new Graph(8);
-		int []start= {0,1,2,3,3,4,5,5,5,6,6,7,7};
-		int []end=   {1,2,3,4,6,5,6,7,4,7,2,5,1};
-		int []gain=  {1,1,1,1,1,1,1,1,1,1,1,1,1};
+		IGraph x=new Graph(9);
+		int []start= {0,1,1,2,2,3,3,4,5,5,6,6,7,7,8};
+		int []end=   {1,2,3,4,3,5,1,6,7,5,8,7,4,1,2};
+		int []gain=  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 		x.BuildGraph(start, end, gain);
-		ArrayList<Integer[]> result=x.getLoops();
+		LinkedList<Loop> result=x.getLoops();
+		for(Loop loop:result)
+		{
+			for(int i=0;i<loop.getLoop().length;i++)
+				System.out.print(loop.getLoop()[i]+" ");
+			System.out.println();
+			
+		}
+		result=x.getNontouchedLoops();
 		for(int i=0;i<result.size();i++)
 		{
-			for (int j=0;j<result.get(i).length;j++)
+			System.out.println("+++++++++++++++++++++++");
+			LinkedList<Integer[]> loop=result.get(i).getLoops();
+			for (int j=0;j<loop.size();j++)
 			{
-				if((result.get(i)[j]+1)==0)
-					break;
-				System.out.print((result.get(i)[j]+1)+" ");
+				Integer[] arr=loop.get(j);
+				for(int k=0;k<arr.length;k++)
+					System.out.print(arr[k]+" ");
+				System.out.println();
 			}
-			System.out.println();
+			//System.out.println("      "+Integer.toBinaryString(result.get(i).getBitnodes())+"   "+result.get(i).getGain());
 		}
 	}
 

@@ -67,4 +67,10 @@ public class Node implements INode {
 		return -1;
 	}
 
+	@Override
+	public int getGain(int nextNode) {
+		// TODO Auto-generated method stub
+		return gains[nextNode];
+	}
+
 }

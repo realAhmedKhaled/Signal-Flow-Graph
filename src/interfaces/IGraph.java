@@ -1,6 +1,9 @@
 package interfaces;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+
+import classes.Loop;
 
 public interface IGraph {
 
@@ -10,7 +13,7 @@ public interface IGraph {
 	 * @return 2D array. each raw represents a sequence of indexes that form a
 	 *         loop.
 	 */
-	ArrayList<Integer[]> getLoops();
+	LinkedList<Loop> getLoops();
 
 	/**
 	 * get all the forward passes between two points in the graph
@@ -32,7 +35,11 @@ public interface IGraph {
 	 * @param gain
 	 *            the corresponding gain of each pass
 	 */
-
 	void BuildGraph(int[] start, int[] end, int[] gain);
 
+	/**
+	 * match all the loops to get all the non touched loops together
+	 * @return non couched loops
+	 */
+	LinkedList<Loop> getNontouchedLoops();
 }
