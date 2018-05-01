@@ -1,7 +1,6 @@
 package classes;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Stack;
 
 import interfaces.IGraph;
@@ -10,7 +9,7 @@ import interfaces.INode;
 public class Graph implements IGraph {
 	private int n;
 	private INode[] nodes;
-	private LinkedList<Loop> loops;
+	private ArrayList<Path> loops;
 
 	public Graph(int numberOfnodes) {
 		this.n = numberOfnodes;
@@ -21,11 +20,11 @@ public class Graph implements IGraph {
 	}
 
 	@Override
-	public LinkedList<Loop> getLoops() {
+	public ArrayList<Path> getLoops() {
 		ArrayList<Integer> loopsinbinary = new ArrayList<>();
 		int x = 0;// current node
 		int child = nodes[x].getNextunvisitedChild();
-		loops = new LinkedList<>();
+		loops = new ArrayList<>();
 		
 		Stack<Integer> stack = new Stack<>();
 
@@ -70,7 +69,7 @@ public class Graph implements IGraph {
 					// System.out.println(loop[j]+" j");
 				}
 				if (i == loopsinbinary.size()) {
-					loops.add(new Loop(loop, binary, nodes));
+					loops.add(new Path(loop, binary, nodes));
 					loopsinbinary.add(binary);
 				}
 				child = nodes[x].getNextunvisitedChild();
@@ -88,9 +87,76 @@ public class Graph implements IGraph {
 	}
 
 	@Override
-	public boolean[][] getForwardPasses(int start, int end) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Path> getForwardPasses(int start, int end) {
+		ArrayList<Integer> loopsinbinary = new ArrayList<>();
+		int x = start;// current node
+		int child = nodes[x].getNextunvisitedChild();
+		loops = new ArrayList<>();
+		Stack<Integer> stack = new Stack<>();
+
+		stack.push(x);
+		nodes[x].SetVisited();
+		while (!stack.isEmpty()) {
+			if (child == -1) {
+				int temp = stack.pop();
+				nodes[temp].resetVisited();
+				if (stack.isEmpty())
+					break;
+				x = stack.peek();
+				child = nodes[x].getNextunvisitedChild();
+				continue;
+
+			}
+			if (nodes[child].isVisited()) {
+				child=nodes[x].getNextunvisitedChild();
+				continue;
+
+			}
+			
+			if (child==end) {
+				Stack<Integer> temp = new Stack<>();
+
+				int binary = 0, stacki = stack.size() - 1;
+				temp.push(child);
+				binary = binary + (1 << child);
+				boolean flag = false;
+				while (stack.get(stacki) != start) {
+					binary = binary + (1 << stack.get(stacki));
+					temp.push(stack.get(stacki));
+					stacki--;
+
+					// System.out.print(loop[i]+" ");
+				}
+				temp.push(stack.get(stacki));
+				// System.out.println();
+				int i;
+				for (i = 0; i < loopsinbinary.size(); i++) {
+					if ((loopsinbinary.get(i) & binary) == (loopsinbinary.get(i) | binary))
+						break;
+				}
+				Integer[] loop = new Integer[temp.size()];
+				// System.out.println(temp.size());
+				for (int j = 0; j < temp.size(); j++) {
+					loop[j] = temp.get(temp.size() - j - 1);
+					// System.out.println(loop[j]+" j");
+				}
+				if (i == loopsinbinary.size()) {
+					loops.add(new Path(loop, binary, nodes));
+					loopsinbinary.add(binary);
+				}
+				child = nodes[x].getNextunvisitedChild();
+				continue;
+
+			}
+			nodes[child].SetVisited();
+			stack.push(child);
+			x = child;
+			child = nodes[x].getNextunvisitedChild();
+
+		}
+
+		return loops;
+
 	}
 
 	@Override
@@ -103,18 +169,21 @@ public class Graph implements IGraph {
 	}
 
 	@Override
-	public LinkedList<Loop> getNontouchedLoops() {
+	public ArrayList<Path> getNontouchedLoops() {
 		// TODO Auto-generated method stub
 		for(int i=0;i<loops.size();i++)
 		{
-			Loop temp= loops.get(i);
+			Path temp= loops.get(i);
 			boolean flag=false;
 			for(int j=i+1;j<loops.size();j++)
 			{
-				if(flag==true)
-					loops.get(j).addLoop(temp.getLoops(),temp.getBitnodes());
-				else
-					flag=loops.get(j).addLoop(temp.getLoops(),temp.getBitnodes());
+				if(	loops.get(j).isAdditive(temp.getLoops(),temp.getBitnodes()))
+				{
+					Path newLoop= new Path(loops.get(j), temp);
+					loops.add(i+1, newLoop);
+					j++;
+				}
+				
 				
 			}
 			if(flag==true)

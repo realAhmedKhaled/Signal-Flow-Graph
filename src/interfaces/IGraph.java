@@ -1,9 +1,8 @@
 package interfaces;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
-import classes.Loop;
+import classes.Path;
 
 public interface IGraph {
 
@@ -13,7 +12,7 @@ public interface IGraph {
 	 * @return 2D array. each raw represents a sequence of indexes that form a
 	 *         loop.
 	 */
-	LinkedList<Loop> getLoops();
+	ArrayList<Path> getLoops();
 
 	/**
 	 * get all the forward passes between two points in the graph
@@ -22,7 +21,7 @@ public interface IGraph {
 	 *         forward pass.
 	 */
 
-	boolean[][] getForwardPasses(int start, int end);
+	ArrayList<Path> getForwardPasses(int start, int end);
 
 	/**
 	 * builds the whole graph at the beginning of the process using the passes
@@ -41,5 +40,5 @@ public interface IGraph {
 	 * match all the loops to get all the non touched loops together
 	 * @return non couched loops
 	 */
-	LinkedList<Loop> getNontouchedLoops();
+	ArrayList<Path> getNontouchedLoops();
 }
