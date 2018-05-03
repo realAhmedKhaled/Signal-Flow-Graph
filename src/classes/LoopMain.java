@@ -8,15 +8,28 @@ public class LoopMain {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		IGraph x=new Graph(9);
 	/*	int []start= {0,1,2,3,4,5,5,6,7,7,8};
 		int []end=   {1,2,3,4,5,2,6,7,4,8,6};
 		int []gain=  {1,1,1,1,1,1,1,1,1,1,1};
 		*/
+		System.out.println("");
 		
-		int []start= {0,1,1,2,3,4,4,5,6,6,6,7,7,8,8};
-		int []end=   {1,1,2,3,4,5,7,6,7,8,5,8,3,6,2};
-		int []gain=  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+		int []start= {0,1,1,2,3,3,4,4,5,5};
+		int []end=   {1,2,5,3,4,2,1,3,5,4};
+		int []gain=  {1,5,10,10,2,-1,-1,-2,-1,2};
+		Graph x=new Graph(6,start,end,gain,0,4);
+		
+		System.out.println(x.getForwardPathes());
+		System.out.println(x.getLoops());
+		System.out.println(x.getNonTouchedLoops());
+		System.out.println(x.getCalculations());
+		
+		
+		
+		
+		
+		
+/*
 		x.BuildGraph(start, end, gain);
 		ArrayList<Path> result=x.getLoops();
 		for(Path loop:result)
@@ -41,6 +54,6 @@ public class LoopMain {
 			}
 			//System.out.println("      "+Integer.toBinaryString(result.get(i).getBitnodes())+"   "+result.get(i).getGain());
 		}
-	}
+*/	}
 
 }

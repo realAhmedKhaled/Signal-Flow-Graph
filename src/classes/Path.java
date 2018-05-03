@@ -7,29 +7,45 @@ import interfaces.INode;
 public class Path {
 	private ArrayList<Integer[]> loops;
 	private ArrayList<Integer> bitnodes;
-	private int gain;	
+	private ArrayList<Integer> loopsIndex;
+	private int gainInt;
+	private ArrayList<Integer> gain;	
 	
-	public Path (Integer[] nodes, int bitnodes,INode [] allNodes)
+	public Path (Integer[] nodes, int bitnodes,INode [] allNodes,int loopIndex)
 	{
 		this.loops=new ArrayList<>();
 		this.bitnodes=new ArrayList<>();
 		this.loops.add(nodes);
 		this.bitnodes.add(bitnodes);
-		gain=0;
+		this.loopsIndex=new ArrayList<>();
+		this.gain=new ArrayList<>();
+		this.gainInt=0;
+		int gaintemp=1;
+		this.loopsIndex.add(loopIndex);
 		for(int i=0;i<nodes.length-1;i++)
 		{
-			gain+=allNodes[nodes[i]].getGain(nodes[i+1]);
+			gaintemp*=allNodes[nodes[i]].getGain(nodes[i+1]);
+			
 			//System.out.println(nodes[i]+" "+nodes[i+1]+" "+gain);
 		}
+		gain.add(gaintemp);
+		gainInt=gaintemp;
 	}
 	public Path (Path l1,Path l2)
 	{
 		this.loops=new ArrayList<>();
 		this.bitnodes=new ArrayList<>();
+		this.loopsIndex=new ArrayList<>();
+		this.gain=new ArrayList<>();
+		gainInt=1;
 		for(int i=0;i<l1.getBitnodes().size();i++)
 		{
 			bitnodes.add(l1.getBitnodes().get(i));
 			loops.add(l1.getLoops().get(i));
+			gain.add(l1.getGain().get(i));
+			gainInt*=l1.getGain().get(i);
+			loopsIndex.add(l1.getLoopIndex().get(i));
+			
 		}
 		for(int i=0;i<l2.getBitnodes().size();i++)
 		{
@@ -44,14 +60,24 @@ public class Path {
 			{
 				bitnodes.add(l2.getBitnodes().get(i));
 				loops.add(l2.getLoops().get(i));
+				gain.add(l2.getGain().get(i));
+				gainInt*=l2.getGain().get(i);
+				loopsIndex.add(l2.getLoopIndex().get(i));
+
+
 			}
 		}
 		
 	}
-	public int getGain()
+	public ArrayList<Integer> getGain()
 	{
 		return gain;
 	}
+	public ArrayList<Integer> getLoopIndex()
+	{
+		return loopsIndex;
+	}
+
 	public ArrayList<Integer> getBitnodes()
 	{
 		return bitnodes;
@@ -63,6 +89,10 @@ public class Path {
 	public ArrayList<Integer[]> getLoops()
 	{
 		return loops;
+	}
+	public int getGainInt()
+	{
+		return gainInt;
 	}
 	
 	
