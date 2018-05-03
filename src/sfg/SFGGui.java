@@ -36,6 +36,7 @@ public class SFGGui extends Application {
     Button addNodeBtn ;
     Button addEdgeBtn ;
     Button GainBtn ;
+    Button resetBtn;
 
     Label fromLabel;
     Label toLabel;
@@ -230,7 +231,7 @@ public class SFGGui extends Application {
             MyNode n = new MyNode((int) Math.round(x), (int) Math.round(y), 15, numberOfAddedNodes);
             n.fillProperty().setValue(new Color(0, 0, 0, 0));
             n.setStroke(new Color(0, 0, 0, 1));
-            n.strokeWidthProperty().setValue(2);
+            n.setStrokeWidth(2);
             n.setOnMouseDragged(moveNodeListener);
             n.setOnMouseClicked(removeNodeListener);
             n.indexLabel = new Label(numberOfAddedNodes++ +"");
@@ -366,6 +367,7 @@ public class SFGGui extends Application {
         edge.setControlY(y);
 
         edge.fillProperty().setValue(new Color(0,0,0,0));
+        edge.setStrokeWidth(3);
         if(fromIndex < toIndex) {
             edge.setStroke(new Color(1, 0, 0, 1));
         }else{
@@ -396,7 +398,21 @@ public class SFGGui extends Application {
         //add to backend an edge
     }
 
-
+    private void resetGraph(){
+		int size  = nodesArr.size();
+		for(int i = 0; i < size; i++){
+			canvas.getChildren().remove(nodesArr.get(nodesArr.size()-1));
+			canvas.getChildren().remove(nodesArr.get(nodesArr.size()-1).indexLabel);			
+			nodesArr.remove(nodesArr.size()-1);
+		}
+		size  = edgesArr.size();
+		for(int i = 0; i < size; i++){
+			canvas.getChildren().remove(edgesArr.get(edgesArr.size()-1));
+			canvas.getChildren().remove(edgesArr.get(edgesArr.size()-1).gainLabel);
+			edgesArr.remove(edgesArr.size()-1);
+		}
+		numberOfAddedNodes = 0;
+	}
     private  void printGain(){
     	int start,end;
     	try {
@@ -444,10 +460,6 @@ public class SFGGui extends Application {
     	out += graph.getNonTouchedLoops()+"\n";
     	out += graph.getCalculations();
     	JOptionPane.showMessageDialog(null,out,"result", JOptionPane.PLAIN_MESSAGE);
-    	
-    	
-    	
-
     }
     private  void initializeButtons(){
         addNodeBtn = new Button();
@@ -485,6 +497,18 @@ public class SFGGui extends Application {
                 printGain();
             }
         });
+        
+        resetBtn= new Button();
+        resetBtn.setText("Reset");
+        resetBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				resetGraph();
+			}
+			
+		});
 
 
         fromLabel = new Label("from");
@@ -523,7 +547,7 @@ public class SFGGui extends Application {
         grid.setLayoutX(800);
         grid.setLayoutY(0);
         grid.getChildren().addAll(addNodeBtn,addEdgeBtn,GainBtn,endLabel,fromLabel,toLabel,startLabel,edgeGainLabel
-                                    ,endTextField,startTextField,fromTextField,toTextField,edgeGainTextField);
+                                    ,endTextField,startTextField,fromTextField,toTextField,edgeGainTextField,resetBtn);
 
 
         grid.setConstraints(addNodeBtn,0,0);
@@ -539,6 +563,7 @@ public class SFGGui extends Application {
         grid.setConstraints(endLabel,0,6);
         grid.setConstraints(endTextField,1,6);
         grid.setConstraints(GainBtn,0,7);
+        grid.setConstraints(resetBtn,0,8);
 
         grid.setPadding(new Insets(10,10,10,10));
         grid.setVgap(10);
