@@ -165,7 +165,7 @@ public class SFGGui extends Application {
 
         if(edge.fromIndex != edge.toIndex) {
             edge.setControlX(x);
-            edge.setControlY(y);
+            edge.setControlY(y -50);
             if (edge.fromNode.getCenterY() - edge.fromNode.getRadius() <= x) {
                 edge.setStartY(edge.fromNode.getCenterY() + edge.fromNode.getRadius());
             } else {
@@ -189,7 +189,7 @@ public class SFGGui extends Application {
             x = edge.fromNode.getCenterX();
 
             edge.setControlX(x);
-            edge.setControlY(y);
+            edge.setControlY(y - 50);
         }
         //top equation
         double t = 0.5;
@@ -364,7 +364,7 @@ public class SFGGui extends Application {
 
 
         edge.setControlX(x);
-        edge.setControlY(y);
+        edge.setControlY(y -50);
 
         edge.fillProperty().setValue(new Color(0,0,0,0));
         edge.setStrokeWidth(3);
