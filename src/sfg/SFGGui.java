@@ -429,13 +429,37 @@ public class SFGGui extends Application {
             JOptionPane.showMessageDialog(null,"end not found","error", JOptionPane.PLAIN_MESSAGE);
             return;
         }
+    	
+    	boolean isStartNFound= false;
+        boolean isEndNFound = false;
+       
+        int startInArr = -1, endInArr = -1;
     	int [] id = new int [nodesArr.size()];
     	for(int i = 0 ;i < id.length; i++){
     		id[i] = nodesArr.get(i).id;
+    		if(nodesArr.get(i).id == start) {
+                isStartNFound = true;
+                startInArr = i;
+            }
+            if (nodesArr.get(i).id == end){
+                isEndNFound = true;
+                endInArr = i;
+            }
     	}
+    	if(!isStartNFound){
+            JOptionPane.showMessageDialog(null,"satrt node isn't found","result", JOptionPane.PLAIN_MESSAGE);
+            return;
+        }
+
+        if(!isEndNFound){
+            //System.out.println(numberOfAddedNodes);
+            JOptionPane.showMessageDialog(null,"end node isn't found","result", JOptionPane.PLAIN_MESSAGE);
+            return;
+        }
     	int[] from = new int[edgesArr.size()];
     	int[] to = new int[edgesArr.size()];
     	int[] gain = new int [edgesArr.size()];
+    	
     	for(int i = 0; i < edgesArr.size();i++){
     		gain[i] = (int)Math.round(edgesArr.get(i).value);
     		boolean isStartFound = false, isEndFound = false;
@@ -451,7 +475,7 @@ public class SFGGui extends Application {
     		}
     	}
     	
-    	Graph graph = new Graph(nodesArr.size(), from,to,gain, start, end);
+    	Graph graph = new Graph(nodesArr.size(), from,to,gain, startInArr, endInArr,id);
     	
     	String out = new String();
   
