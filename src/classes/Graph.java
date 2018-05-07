@@ -14,10 +14,12 @@ public class Graph  implements IGraph   {
 	private double overallGain;
 	private ArrayList<Path> forwardpathes;
 	private ArrayList<Path> nonTouchedLoops;
+	private int[]nodesId;
 
-	public Graph(int numberOfnodes, int[] pathStart, int[] pathEnd, int[] pathGain, int startNode, int endNode) {
+	public Graph(int numberOfnodes, int[] pathStart, int[] pathEnd, int[] pathGain, int startNode, int endNode,int[] nodesid) {
 		this.n = numberOfnodes;
 		nodes = new Node[n];
+		this.nodesId=nodesid;
 		for (int i = 0; i < n; i++) {
 			nodes[i] = new Node(numberOfnodes);
 		}
@@ -76,9 +78,9 @@ public class Graph  implements IGraph   {
 			result.append("P" + i + ": (");
 			for (int j = 0; j < loop.getLoop().length; j++) {
 				if (j == loop.getLoop().length - 1)
-					result.append(loop.getLoop()[j] + ") Gain= "+loop.getGainInt()+"\n");
+					result.append(nodesId[loop.getLoop()[j]] + ") Gain= "+loop.getGainInt()+"\n");
 				else
-					result.append(loop.getLoop()[j] + ", ");
+					result.append(nodesId[loop.getLoop()[j]] + ", ");
 
 			}
 			result.append("\n");
@@ -136,9 +138,9 @@ public class Graph  implements IGraph   {
 			result.append("L" + i + ": (");
 			for (int j = 0; j < path.getLoop().length; j++) {
 				if (j == path.getLoop().length - 1)
-					result.append(path.getLoop()[j] + ") Gain="+path.getGainInt());
+					result.append(nodesId[path.getLoop()[j]] + ") Gain="+path.getGainInt());
 				else
-					result.append(path.getLoop()[j] + ", ");
+					result.append(nodesId[path.getLoop()[j]] + ", ");
 
 			}
 			result.append("\n");
