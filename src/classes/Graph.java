@@ -10,7 +10,8 @@ public class Graph implements IGraph {
 	private int n;
 	private INode[] nodes;
 	private ArrayList<Path> loops;
-	private double delta = 1;
+	private ArrayList<Integer> binaryLoops;
+ 	private double delta = 1;
 	private double overallGain;
 	private ArrayList<Path> forwardpathes;
 	private ArrayList<Path> nonTouchedLoops;
@@ -145,6 +146,7 @@ public class Graph implements IGraph {
 		int x = 0;// current node
 		int child = nodes[x].getNextunvisitedChild();
 		loops = new ArrayList<>();
+		binaryLoops= new ArrayList<>();
 		nonTouchedLoops = new ArrayList<>();
 
 		Stack<Integer> stack = new Stack<>();
@@ -181,17 +183,7 @@ public class Graph implements IGraph {
 
 					// System.out.print(loop[i]+" ");
 				}
-				if(temp.size()==1)
-				{
-					for(int bin:loopsinbinary)
-					{
-						if((bin&binary)==(bin|binary))
-						{
-							isValidLoop=false;
-							break;
-						}
-					}
-				}
+				
 				if (isValidLoop) {
 					temp.push(stack.get(stacki));
 					// System.out.println();
@@ -201,10 +193,14 @@ public class Graph implements IGraph {
 						loop[j] = temp.get(temp.size() - j - 1);
 						// System.out.println(loop[j]+" j");
 					}
-					loops.add(new Path(loop, binary, nodes, loops.size()));
-					nonTouchedLoops.add(new Path(loop, binary, nodes, nonTouchedLoops.size()));
-					loopsinbinary.add(binary);
-					delta -= loops.get(loops.size() - 1).getGainInt();
+					if(checkValidity(loop,binary))
+					{
+						loops.add(new Path(loop, binary, nodes, loops.size()));
+						binaryLoops.add(binary);
+						nonTouchedLoops.add(new Path(loop, binary, nodes, nonTouchedLoops.size()));
+						loopsinbinary.add(binary);
+						delta -= loops.get(loops.size() - 1).getGainInt();
+					}
 					
 				}
 				child = nodes[x].getNextunvisitedChild();
@@ -219,6 +215,28 @@ public class Graph implements IGraph {
 
 		}
 
+	}
+
+	private boolean checkValidity(Integer[] loop,int binary) {
+		for(int i=0;i<binaryLoops.size();i++)
+		{
+			if((binary&binaryLoops.get(i))==(binary|binaryLoops.get(i)))
+			{
+				Integer[] loop2=loops.get(i).getLoop();
+				int j=0;
+				for(j=0;j<loop2.length;j++)
+				{
+					if(loop2[j]!=loop[j])
+						 break;		
+				}
+				if(j==loop2.length)
+				{
+					return false;
+				}
+		
+			}
+		}
+		return true;
 	}
 
 	private void generateForwardPasses(int start, int end) {
