@@ -181,6 +181,17 @@ public class Graph implements IGraph {
 
 					// System.out.print(loop[i]+" ");
 				}
+				if(temp.size()==1)
+				{
+					for(int bin:loopsinbinary)
+					{
+						if((bin&binary)==(bin|binary))
+						{
+							isValidLoop=false;
+							break;
+						}
+					}
+				}
 				if (isValidLoop) {
 					temp.push(stack.get(stacki));
 					// System.out.println();
@@ -251,21 +262,15 @@ public class Graph implements IGraph {
 				}
 				temp.push(stack.get(stacki));
 				// System.out.println();
-				int i;
-				for (i = 0; i < loopsinbinary.size(); i++) {
-					if ((loopsinbinary.get(i) & binary) == (loopsinbinary.get(i) | binary))
-						break;
-				}
 				Integer[] loop = new Integer[temp.size()];
 				// System.out.println(temp.size());
 				for (int j = 0; j < temp.size(); j++) {
 					loop[j] = temp.get(temp.size() - j - 1);
 					// System.out.println(loop[j]+" j");
 				}
-				if (i == loopsinbinary.size()) {
-					forwardpathes.add(new Path(loop, binary, nodes, forwardpathes.size()));
-					loopsinbinary.add(binary);
-				}
+				forwardpathes.add(new Path(loop, binary, nodes, forwardpathes.size()));
+				loopsinbinary.add(binary);
+			
 				child = nodes[x].getNextunvisitedChild();
 				continue;
 
