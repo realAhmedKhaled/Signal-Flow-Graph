@@ -13,11 +13,11 @@ public class LoopMain {
 		int []gain=  {1,1,1,1,1,1,1,1,1,1,1};
 		*/
 		System.out.println("");
-		
+		int [] id = {0,1,2,3,4,5};
 		int []start= {0,1,1,2,3,3,4,4,5,5};
 		int []end=   {1,2,5,3,4,2,1,3,5,4};
-		int []gain=  {1,5,10,10,2,-1,-1,-2,-1,2};
-		Graph x=new Graph(6,start,end,gain,0,4);
+		double []gain=  {1,5,10,10,2,-1,-1,-2,-1,2};
+		Graph x=new Graph(6,start,end,gain,0,4,id);
 		
 		System.out.println(x.getForwardPathes());
 		System.out.println(x.getLoops());
