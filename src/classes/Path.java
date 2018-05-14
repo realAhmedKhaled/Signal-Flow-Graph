@@ -5,35 +5,34 @@ import java.util.ArrayList;
 import interfaces.INode;
 
 public class Path {
-	private ArrayList<Integer[]> loops;
+	private ArrayList<Integer[]> paths;
 	private ArrayList<Integer> bitnodes;
 	private ArrayList<Integer> loopsIndex;
-	private int gainInt;
-	private ArrayList<Integer> gain;	
+	private double gainInt;
+	private ArrayList<Double> gain;	
 	
 	public Path (Integer[] nodes, int bitnodes,INode [] allNodes,int loopIndex)
 	{
-		this.loops=new ArrayList<>();
+		this.paths=new ArrayList<>();
 		this.bitnodes=new ArrayList<>();
-		this.loops.add(nodes);
+		this.paths.add(nodes);
 		this.bitnodes.add(bitnodes);
 		this.loopsIndex=new ArrayList<>();
 		this.gain=new ArrayList<>();
 		this.gainInt=0;
-		int gaintemp=1;
+		double gaintemp=1;
 		this.loopsIndex.add(loopIndex);
 		for(int i=0;i<nodes.length-1;i++)
 		{
 			gaintemp*=allNodes[nodes[i]].getGain(nodes[i+1]);
 			
-			//System.out.println(nodes[i]+" "+nodes[i+1]+" "+gain);
 		}
 		gain.add(gaintemp);
 		gainInt=gaintemp;
 	}
 	public Path (Path l1,Path l2)
 	{
-		this.loops=new ArrayList<>();
+		this.paths=new ArrayList<>();
 		this.bitnodes=new ArrayList<>();
 		this.loopsIndex=new ArrayList<>();
 		this.gain=new ArrayList<>();
@@ -41,7 +40,7 @@ public class Path {
 		for(int i=0;i<l1.getBitnodes().size();i++)
 		{
 			bitnodes.add(l1.getBitnodes().get(i));
-			loops.add(l1.getLoops().get(i));
+			paths.add(l1.getLoops().get(i));
 			gain.add(l1.getGain().get(i));
 			gainInt*=l1.getGain().get(i);
 			loopsIndex.add(l1.getLoopIndex().get(i));
@@ -59,7 +58,7 @@ public class Path {
 			if(!repeated)
 			{
 				bitnodes.add(l2.getBitnodes().get(i));
-				loops.add(l2.getLoops().get(i));
+				paths.add(l2.getLoops().get(i));
 				gain.add(l2.getGain().get(i));
 				gainInt*=l2.getGain().get(i);
 				loopsIndex.add(l2.getLoopIndex().get(i));
@@ -69,7 +68,7 @@ public class Path {
 		}
 		
 	}
-	public ArrayList<Integer> getGain()
+	public ArrayList<Double> getGain()
 	{
 		return gain;
 	}
@@ -84,13 +83,13 @@ public class Path {
 	}
 	public Integer[]  getLoop()
 	{
-		return loops.get(0);
+		return paths.get(0);
 	}
 	public ArrayList<Integer[]> getLoops()
 	{
-		return loops;
+		return paths;
 	}
-	public int getGainInt()
+	public Double getGainInt()
 	{
 		return gainInt;
 	}

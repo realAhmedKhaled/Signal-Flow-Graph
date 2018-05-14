@@ -6,19 +6,19 @@ public class Node implements INode {
 
 	boolean visited;
 	boolean[] childNodes;
-	int[] gains;
+	double[] gains;
 	int childIterator;
 	int n;
 
 	public Node(int numberOfnodes) {
 		n = numberOfnodes;
 		childIterator = 0;
-		gains=new int[n];
+		gains=new double[n];
 		childNodes= new boolean[n];
 	}
 
 	@Override
-	public void AddChild(int childNode, int childGain) {
+	public void AddChild(int childNode, double childGain) {
 		childNodes[childNode] = true;
 		gains[childNode] = childGain;
 
@@ -68,7 +68,7 @@ public class Node implements INode {
 	}
 
 	@Override
-	public int getGain(int nextNode) {
+	public double getGain(int nextNode) {
 		// TODO Auto-generated method stub
 		return gains[nextNode];
 	}

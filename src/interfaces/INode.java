@@ -10,7 +10,7 @@ public interface INode {
 	 * @param childGain
 	 *            the gain of the child node
 	 */
-	void AddChild(int childNode, int childGain);
+	void AddChild(int childNode, double childGain);
 
 	/**
 	 * checks if a specific node is a child of this node or not
@@ -58,7 +58,8 @@ public interface INode {
 	 * @return the gain of the path between them
 	 */
 	
-	int getGain(int nextNode);
+	double getGain(int nextNode);
+
 		
 
 }

@@ -458,7 +458,7 @@ public class SFGGui extends Application {
         }
     	int[] from = new int[edgesArr.size()];
     	int[] to = new int[edgesArr.size()];
-    	int[] gain = new int [edgesArr.size()];
+    	double[] gain = new double [edgesArr.size()];
     	
     	for(int i = 0; i < edgesArr.size();i++){
     		gain[i] = (int)Math.round(edgesArr.get(i).value);

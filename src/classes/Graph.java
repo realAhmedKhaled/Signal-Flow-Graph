@@ -10,13 +10,13 @@ public class Graph implements IGraph {
 	private int n;
 	private INode[] nodes;
 	private ArrayList<Path> loops;
-	private int delta = 1;
+	private double delta = 1;
 	private double overallGain;
 	private ArrayList<Path> forwardpathes;
 	private ArrayList<Path> nonTouchedLoops;
 	private int[] nodesId;
 
-	public Graph(int numberOfnodes, int[] pathStart, int[] pathEnd, int[] pathGain, int startNode, int endNode,
+	public Graph(int numberOfnodes, int[] pathStart, int[] pathEnd, double[] pathGain, int startNode, int endNode,
 			int[] nodesid) {
 		this.n = numberOfnodes;
 		nodes = new Node[n];
@@ -34,7 +34,7 @@ public class Graph implements IGraph {
 		StringBuilder result = new StringBuilder("delta = ");
 		result.append(delta + " \n");
 		for (int i = 0; i < forwardpathes.size(); i++) {
-			int temp = getDelta(forwardpathes.get(i));
+			double temp = getDelta(forwardpathes.get(i));
 			overallGain += temp * forwardpathes.get(i).getGainInt();
 			result.append("delta" + (i + 1) + "= " + temp + "\n");
 		}
@@ -44,8 +44,8 @@ public class Graph implements IGraph {
 		return result.toString();
 	}
 
-	private int getDelta(Path path) {
-		int delta = 1;
+	private double getDelta(Path path) {
+		double delta = 1;
 		for (Path loop : loops) {
 			if (loop.isAdditive(path.getLoops(), path.getBitnodes())) {
 				delta -= loop.getGainInt();
@@ -279,7 +279,7 @@ public class Graph implements IGraph {
 
 	}
 
-	private void BuildGraph(int[] start, int[] end, int[] gain) {
+	private void BuildGraph(int[] start, int[] end, double[] gain) {
 		// TODO Auto-generated method stub
 		for (int i = 0; i < start.length; i++) {
 			nodes[start[i]].AddChild(end[i], gain[i]);
