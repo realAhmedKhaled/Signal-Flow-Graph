@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -24,6 +25,10 @@ import javax.swing.*;
 
 import classes.Graph;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SFGGui extends Application {
@@ -37,6 +42,7 @@ public class SFGGui extends Application {
     Button addEdgeBtn ;
     Button GainBtn ;
     Button resetBtn;
+    Button readBtn;
 
     Label fromLabel;
     Label toLabel;
@@ -52,6 +58,8 @@ public class SFGGui extends Application {
     TextField endTextField;
 
     GridPane grid ;
+    ScrollPane scrollPane;
+    TextArea resultTA;
 
     int numberOfAddedNodes = 0;
 
@@ -397,6 +405,131 @@ public class SFGGui extends Application {
         edgeGainTextField.clear();
         //add to backend an edge
     }
+    private boolean addEdge(int fromIndex,int toIndex,double value){
+        double fromX =0,fromY=0,toX=0,toY=0,x=0,y = 0;
+        
+        // if repeated edge
+        for(int i = 0; i <edgesArr.size(); i++){
+            if(edgesArr.get(i).fromIndex == fromIndex && edgesArr.get(i).toIndex == toIndex){
+                edgesArr.get(i).value += value;
+                edgesArr.get(i).gainLabel.setText(edgesArr.get(i).value+"");
+                fromTextField.clear();
+                toTextField.clear();
+                edgeGainTextField.clear();
+                return true;
+            }
+        }
+
+
+        MyEdge edge = new MyEdge(fromIndex,toIndex,value);
+        edge.setOnMouseDragged(moveEdgeListener);
+        edge.setOnMouseClicked(removeEdgeListener);
+        edge.fromIndex = fromIndex;
+        edge.toIndex = toIndex;
+        edge.value = value;
+
+
+
+        boolean isFromFound= false;
+        boolean isToFound = false;
+        int i;
+        for(i= 0; i < nodesArr.size() && (!isFromFound || !isToFound); i++){
+            //System.out.println(nodesArr.get(i).id);
+            if(nodesArr.get(i).id == fromIndex) {
+                fromX = nodesArr.get(i).getCenterX();
+                edge.setStartX(fromX);
+                fromY = nodesArr.get(i).getCenterY() - nodesArr.get(i).getRadius();
+                edge.setStartY(fromY);
+                edge.fromNode = nodesArr.get(i);
+                isFromFound = true;
+                nodesArr.get(i).outEdgesArr.add(edge);
+            }
+            if (nodesArr.get(i).id == toIndex){
+                toX = nodesArr.get(i).getCenterX();
+                toY = nodesArr.get(i).getCenterY()-nodesArr.get(i).getRadius();
+                edge.setEndX(toX);
+                edge.setEndY(toY);
+                edge.toNode = nodesArr.get(i);
+                isToFound = true;
+                nodesArr.get(i).inEdgesArr.add(edge);
+            }
+        }
+
+        if(!isFromFound){
+            JOptionPane.showMessageDialog(null,"from node isn't found","result", JOptionPane.PLAIN_MESSAGE);
+            return false;
+        }
+
+        if(!isToFound){
+            //System.out.println(numberOfAddedNodes);
+            JOptionPane.showMessageDialog(null,"to node isn't found","result", JOptionPane.PLAIN_MESSAGE);
+            return false;
+        }
+
+        if(fromIndex == toIndex){
+            i--;
+            edge.setStartX(fromX - nodesArr.get(i).getRadius());
+            edge.setEndX(fromX + nodesArr.get(i).getRadius());
+
+            edge.setStartY(nodesArr.get(i).getCenterY());
+            edge.setEndY(nodesArr.get(i).getCenterY());
+
+           y =nodesArr.get(i).getCenterY() - 4 * nodesArr.get(i).getRadius();
+           x = nodesArr.get(i).getCenterX();
+
+        }else {
+
+            x = Math.abs((fromX - toX) / 2);
+            y = Math.abs((fromY - toY) / 2);
+            if (fromX < toX) {
+                x += fromX;
+            } else {
+                x += toX;
+            }
+
+            if (fromY < toY) {
+                y += fromY;
+            } else {
+                y += toY;
+            }
+        }
+
+
+        edge.setControlX(x);
+        edge.setControlY(y -50);
+
+        edge.fillProperty().setValue(new Color(0,0,0,0));
+        edge.setStrokeWidth(3);
+        if(fromIndex < toIndex) {
+            edge.setStroke(new Color(1, 0, 0, 1));
+        }else{
+            edge.setStroke(new Color(0, 1, 0, 1));
+        }
+
+        edge.gainLabel= new EdgeLabel(edge,value+"");
+
+        /*edge.gainLabel.setLayoutX(x);
+        edge.gainLabel.setLayoutY(y);
+*/
+        //top equation
+        double t = 0.5;
+        t =(1-t)*((1-t)*edge.getStartY()+t* edge.getControlY())+t*((1-t)*edge.getControlY()+t*edge.getEndY());
+
+        edge.gainLabel.setLayoutY(t - 15);
+        t = 0.5;
+        t =(1-t)*((1-t)*edge.getStartX()+t* edge.getControlX())+t*((1-t)*edge.getControlX()+t*edge.getEndX());
+        edge.gainLabel.setLayoutX(t);
+
+
+        edgesArr.add(edge);
+        canvas.getChildren().addAll(edge,edge.gainLabel);
+
+        fromTextField.clear();
+        toTextField.clear();
+        edgeGainTextField.clear();
+        return true;
+        //add to backend an edge
+    }
 
     private void resetGraph(){
 		int size  = nodesArr.size();
@@ -483,7 +616,57 @@ public class SFGGui extends Application {
     	out += graph.getLoops()+"\n";
     	out += graph.getNonTouchedLoops()+"\n";
     	out += graph.getCalculations();
-    	JOptionPane.showMessageDialog(null,out,"result", JOptionPane.PLAIN_MESSAGE);
+    	//JOptionPane.showMessageDialog(null,out,"result", JOptionPane.PLAIN_MESSAGE);
+    	resultTA.setText(out);
+    }
+    private void readFromFile(){
+    	BufferedReader file;
+    	try {
+    		FileReader input = new FileReader("input.txt");
+			file =new BufferedReader(input);
+		} catch (FileNotFoundException e1) {
+			JOptionPane.showMessageDialog(null,"file not found","error", JOptionPane.PLAIN_MESSAGE);
+			return;
+	    }
+		
+		//ArrayList<String> ll=new ArrayList<String>();
+		String s;
+		try {
+			resetGraph();
+			s = file.readLine();
+			int numberofNodes = Integer.parseInt(s);
+			for(int i = 0; i < numberofNodes; i++) {
+				addNode(50+50*i , 300);
+			}
+			s = file.readLine();
+			int numberofEdges = Integer.parseInt(s);
+			boolean isWrongEdge = false;
+			for(int i = 0; i < numberofEdges && !isWrongEdge; i++){
+				s = file.readLine();
+				if(s != null){
+					String [] arr = s.split(" ");
+					if(arr.length == 3){
+						int from = Integer.parseInt(arr[0]);
+						int to = Integer.parseInt(arr[1]);
+						int value = Integer.parseInt(arr[2]);
+						isWrongEdge = !addEdge(from, to, value);
+					}else{
+						String errorMess= "wrong edge in line " + (i+2)+" .";
+						JOptionPane.showMessageDialog(null,errorMess,"error", JOptionPane.PLAIN_MESSAGE);
+						return;
+					}					
+				}else{
+					String errorMess= "wrong edge in line " + (i+2)+" .";
+					JOptionPane.showMessageDialog(null,errorMess,"error", JOptionPane.PLAIN_MESSAGE);
+					return;
+				}					
+			}
+			startTextField.setText(file.readLine());
+			endTextField.setText(file.readLine());
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null,"wrong input","error", JOptionPane.PLAIN_MESSAGE);			
+		}
+		
     }
     private  void initializeButtons(){
         addNodeBtn = new Button();
@@ -533,6 +716,16 @@ public class SFGGui extends Application {
 			}
 			
 		});
+        readBtn = new Button();
+        readBtn.setText("Read File");
+        readBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+               readFromFile();
+            }
+        });
+        readBtn.setMaxWidth(100);
+
 
 
         fromLabel = new Label("from");
@@ -564,14 +757,18 @@ public class SFGGui extends Application {
         fromTextField.setPrefWidth(50);
 
 
-
-
+        resultTA = new TextArea();
+        resultTA.setPrefWidth(270);
+        resultTA.setPrefHeight(270);
+        resultTA.setEditable(false);
+        
 
         grid = new GridPane();
         grid.setLayoutX(800);
         grid.setLayoutY(0);
         grid.getChildren().addAll(addNodeBtn,addEdgeBtn,GainBtn,endLabel,fromLabel,toLabel,startLabel,edgeGainLabel
-                                    ,endTextField,startTextField,fromTextField,toTextField,edgeGainTextField,resetBtn);
+                                    ,endTextField,startTextField,fromTextField,toTextField,edgeGainTextField,resetBtn
+                                    ,resultTA,readBtn);
 
 
         grid.setConstraints(addNodeBtn,0,0);
@@ -588,6 +785,9 @@ public class SFGGui extends Application {
         grid.setConstraints(endTextField,1,6);
         grid.setConstraints(GainBtn,0,7);
         grid.setConstraints(resetBtn,0,8);
+        grid.setConstraints(readBtn,1,8);
+        grid.setConstraints(resultTA,0,9);
+        grid.setColumnSpan(resultTA,2);
 
         grid.setPadding(new Insets(10,10,10,10));
         grid.setVgap(10);
@@ -601,23 +801,11 @@ public class SFGGui extends Application {
         canvas.setPrefHeight(600);
         canvas.setPrefWidth(800);
 
-        /*canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if(isAddNode){
-                    addNode(event.getX(),event.getY());
-                    isAddNode = false;
-                }else if(isAddEdge){
-                    addEdge(event.getX(),event.getY());
-                    isAddEdge = false;
-                }
-            }
-        });*/
 
         canvas.setBackground(new Background(new BackgroundFill(new Color(
                                         1,1,0.9,1), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        ScrollPane scrollPane= new ScrollPane();
+        scrollPane= new ScrollPane();
         scrollPane.setLayoutY(0);
         scrollPane.setLayoutX(0);
         scrollPane.setPrefHeight(600);
@@ -625,18 +813,6 @@ public class SFGGui extends Application {
 
         scrollPane.setContent(canvas);
         root.getChildren().add(scrollPane);
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
 
@@ -649,8 +825,9 @@ public class SFGGui extends Application {
 
         primaryStage.setTitle("SFG");
 
-
-        primaryStage.setScene(new Scene(root, 1100, 600,Color.LIGHTBLUE));
+        Scene scene = new Scene(root, 1100, 600,Color.LIGHTBLUE);
+        primaryStage.setResizable(false);
+        primaryStage.setScene(scene);
         primaryStage.show();
 
     }
