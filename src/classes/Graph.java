@@ -317,11 +317,23 @@ public class Graph implements IGraph {
 			for (int j = i + 1; j < nonTouchedLoops.size(); j++) {
 				if (nonTouchedLoops.get(j).isAdditive(temp.getLoops(), temp.getBitnodes())) {
 					Path newLoop = new Path(nonTouchedLoops.get(j), temp);
-					nonTouchedLoops.add(i + 1, newLoop);
-					if (newLoop.getBitnodes().size() % 2 == 0)
-						delta += newLoop.getGainInt();
-					else
-						delta -= newLoop.getGainInt();
+					boolean flag=true;
+					for(int q=i;q>=0;q--)
+					{
+						if((newLoop.getBitLoops()&nonTouchedLoops.get(q).getBitLoops())==
+								(newLoop.getBitLoops()|nonTouchedLoops.get(q).getBitLoops()))
+						{
+							flag=false;
+						}
+					}
+					if(flag)
+					{
+						nonTouchedLoops.add(i + 1, newLoop);
+						if (newLoop.getBitnodes().size() % 2 == 0)
+							delta += newLoop.getGainInt();
+						else
+							delta -= newLoop.getGainInt();
+					}
 					j++;
 				}
 

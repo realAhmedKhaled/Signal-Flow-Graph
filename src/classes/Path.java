@@ -9,6 +9,7 @@ public class Path {
 	private ArrayList<Integer> bitnodes;
 	private ArrayList<Integer> loopsIndex;
 	private double gainInt;
+	private int bitLoops;
 	private ArrayList<Double> gain;	
 	
 	public Path (Integer[] nodes, int bitnodes,INode [] allNodes,int loopIndex)
@@ -20,6 +21,7 @@ public class Path {
 		this.loopsIndex=new ArrayList<>();
 		this.gain=new ArrayList<>();
 		this.gainInt=0;
+		bitLoops|=((1<<loopIndex));
 		double gaintemp=1;
 		this.loopsIndex.add(loopIndex);
 		for(int i=0;i<nodes.length-1;i++)
@@ -37,6 +39,7 @@ public class Path {
 		this.loopsIndex=new ArrayList<>();
 		this.gain=new ArrayList<>();
 		gainInt=1;
+		bitLoops=l1.getBitLoops()|l2.getBitLoops();
 		for(int i=0;i<l1.getBitnodes().size();i++)
 		{
 			bitnodes.add(l1.getBitnodes().get(i));
@@ -63,11 +66,11 @@ public class Path {
 				gainInt*=l2.getGain().get(i);
 				loopsIndex.add(l2.getLoopIndex().get(i));
 
-
 			}
 		}
 		
 	}
+	
 	public ArrayList<Double> getGain()
 	{
 		return gain;
@@ -80,6 +83,10 @@ public class Path {
 	public ArrayList<Integer> getBitnodes()
 	{
 		return bitnodes;
+	}
+	public int getBitLoops()
+	{
+		return bitLoops;
 	}
 	public Integer[]  getLoop()
 	{
